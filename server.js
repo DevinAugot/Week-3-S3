@@ -1,2 +1,63 @@
 const http = require("http");
-const server = require('server');
+const fs = require("fs");
+
+
+const server = http.createServer((request, response) => {
+  let path = "./views/";
+  console.log(request.url);
+  switch (request.url) {
+    case "/":
+      console.log("top of the localhost:3000 web site");
+      path += "home.html";
+      console.log(path);
+      fs.readFile(path, function (err, data) {
+        if (err) {
+          console.log(err);
+          response.end();
+        } else {
+          console.log("file was served.");
+          response.writeHead(response.statusCode, {
+            "Content-Type": "text/html",
+          });
+          response.write(data);
+          response.end();
+        }
+      });
+      break;
+    case "/test":
+      path += "test.html";
+      console.log(path);
+      fs.readFile(path, function (err, data) {
+        if (err) {
+          console.log(err);
+          response.end();
+        } else {
+          console.log("test.html was read");
+          response.writeHead(response.statusCode, {
+            "Content-Type": "text/html",
+          });
+          response.write(data);
+          response.end();
+        }
+      });
+      break;
+
+    // cookies
+    case "/set-cookies":
+ 
+        response.setHeader("Set-cookie", "fullName=ScoobyDoo");
+      response.end("Don't toss your cookies");
+      break;
+
+    default:
+      console.log("everything else");
+      response.setHeader("Content_Type", "text/plain");
+      response.write("Every other route!");
+      response.end();
+      break;
+  }
+});
+
+server.listen(3000, "localhost", () => {
+  console.log("listening on port 3000.");
+});
